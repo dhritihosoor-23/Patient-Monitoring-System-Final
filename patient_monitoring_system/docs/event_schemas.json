@@ -1,0 +1,360 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Patient Monitoring System Event Schemas",
+    "description": "JSON schemas for all event types in the patient monitoring system",
+    "definitions": {
+        "BoundingBox": {
+            "type": "object",
+            "properties": {
+                "x1": {
+                    "type": "number"
+                },
+                "y1": {
+                    "type": "number"
+                },
+                "x2": {
+                    "type": "number"
+                },
+                "y2": {
+                    "type": "number"
+                },
+                "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                }
+            },
+            "required": [
+                "x1",
+                "y1",
+                "x2",
+                "y2"
+            ]
+        },
+        "BaseEvent": {
+            "type": "object",
+            "properties": {
+                "event_type": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "number"
+                },
+                "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "agent_name": {
+                    "type": "string"
+                },
+                "frame_id": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "event_type",
+                "timestamp",
+                "confidence",
+                "agent_name",
+                "frame_id"
+            ]
+        },
+        "FallDetectionEvent": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseEvent"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "fall_type": {
+                            "type": "string",
+                            "enum": [
+                                "fall",
+                                "near_fall",
+                                "lying",
+                                "abnormal_collapse"
+                            ]
+                        },
+                        "bbox": {
+                            "$ref": "#/definitions/BoundingBox"
+                        },
+                        "pose_vector": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        "torso_angle": {
+                            "type": "number"
+                        },
+                        "hip_height": {
+                            "type": "number"
+                        },
+                        "vertical_velocity": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "fall_type"
+                    ]
+                }
+            ]
+        },
+        "EmotionDetectionEvent": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseEvent"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "emotion": {
+                            "type": "string",
+                            "enum": [
+                                "happy",
+                                "sad",
+                                "angry",
+                                "fear",
+                                "disgust",
+                                "surprise",
+                                "neutral"
+                            ]
+                        },
+                        "valence": {
+                            "type": "number",
+                            "minimum": -1,
+                            "maximum": 1
+                        },
+                        "arousal": {
+                            "type": "number",
+                            "minimum": -1,
+                            "maximum": 1
+                        },
+                        "face_bbox": {
+                            "$ref": "#/definitions/BoundingBox"
+                        },
+                        "emotion_probabilities": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "required": [
+                        "emotion",
+                        "valence",
+                        "arousal"
+                    ]
+                }
+            ]
+        },
+        "VitalSignsEvent": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseEvent"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "heart_rate": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 300
+                        },
+                        "respiratory_rate": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100
+                        },
+                        "signal_quality": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                        },
+                        "hr_confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                        },
+                        "rr_confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                        }
+                    },
+                    "required": [
+                        "signal_quality"
+                    ]
+                }
+            ]
+        },
+        "BedExitEvent": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseEvent"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "state": {
+                            "type": "string",
+                            "enum": [
+                                "IN_BED",
+                                "SITTING_UP",
+                                "STANDING",
+                                "OUT_OF_BED"
+                            ]
+                        },
+                        "previous_state": {
+                            "type": "string"
+                        },
+                        "transition": {
+                            "type": "boolean"
+                        },
+                        "duration_in_state": {
+                            "type": "number"
+                        },
+                        "bed_region": {
+                            "$ref": "#/definitions/BoundingBox"
+                        },
+                        "person_bbox": {
+                            "$ref": "#/definitions/BoundingBox"
+                        }
+                    },
+                    "required": [
+                        "state"
+                    ]
+                }
+            ]
+        },
+        "ImmobilityEvent": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseEvent"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "immobility_duration": {
+                            "type": "number"
+                        },
+                        "last_movement_time": {
+                            "type": "number"
+                        },
+                        "risk_level": {
+                            "type": "string",
+                            "enum": [
+                                "LOW",
+                                "MEDIUM",
+                                "HIGH"
+                            ]
+                        },
+                        "posture": {
+                            "type": "string",
+                            "enum": [
+                                "supine",
+                                "prone",
+                                "lying_side",
+                                "unknown"
+                            ]
+                        },
+                        "movement_magnitude": {
+                            "type": "number"
+                        },
+                        "posture_change_count": {
+                            "type": "integer"
+                        }
+                    },
+                    "required": [
+                        "immobility_duration",
+                        "risk_level"
+                    ]
+                }
+            ]
+        },
+        "SeizureDetectionEvent": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseEvent"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "seizure_detected": {
+                            "type": "boolean"
+                        },
+                        "motion_frequency": {
+                            "type": "number"
+                        },
+                        "affected_limbs": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "left_arm",
+                                    "right_arm",
+                                    "left_leg",
+                                    "right_leg"
+                                ]
+                            }
+                        },
+                        "duration": {
+                            "type": "number"
+                        },
+                        "magnitude": {
+                            "type": "number"
+                        }
+                    },
+                    "required": [
+                        "seizure_detected",
+                        "motion_frequency",
+                        "affected_limbs"
+                    ]
+                }
+            ]
+        },
+        "ConsolidatedAlert": {
+            "type": "object",
+            "properties": {
+                "alert_id": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "string",
+                    "enum": [
+                        "INFO",
+                        "LOW",
+                        "MEDIUM",
+                        "HIGH",
+                        "CRITICAL"
+                    ]
+                },
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "number"
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/BaseEvent"
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            },
+            "required": [
+                "alert_id",
+                "level",
+                "message",
+                "timestamp",
+                "events"
+            ]
+        }
+    }
+}

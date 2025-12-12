@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Monitoring System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🏥 Patient Monitoring System</h1>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span id="statusText">Inactive</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel: Video Display -->
+            <div class="video-panel">
+                <div class="video-container">
+                    <img id="videoFrame" src="" alt="Video feed will appear here">
+                    <div class="video-placeholder" id="videoPlaceholder">
+                        <p>📹 No video feed</p>
+                        <p class="small">Select a source and click Start</p>
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="controls">
+                    <div class="input-group">
+                        <label for="videoSource">Video Source:</label>
+                        <select id="videoSource">
+                            <option value="0">Webcam (0)</option>
+                            <option value="1">Webcam (1)</option>
+                            <option value="uploaded">Upload Video</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group" id="fileUploadGroup" style="display: none;">
+                        <input type="file" id="videoFile" accept="video/*">
+                        <button id="uploadBtn" class="btn btn-secondary">Upload</button>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="startBtn" class="btn btn-primary">▶ Start Monitoring</button>
+                        <button id="stopBtn" class="btn btn-danger" disabled>⏹ Stop</button>
+                    </div>
+                    
+                    <div class="fps-display">
+                        FPS: <span id="fpsValue">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Events and Alerts -->
+            <div class="info-panel">
+                <!-- Vital Signs -->
+                <div class="card vital-signs-card">
+                    <h3>💓 Vital Signs</h3>
+                    <div class="vital-signs">
+                        <div class="vital-item">
+                            <span class="vital-label">Heart Rate:</span>
+                            <span class="vital-value" id="heartRate">-- bpm</span>
+                        </div>
+                        <div class="vital-item">
+                            <span class="vital-label">Respiratory Rate:</span>
+                            <span class="vital-value" id="respRate">-- /min</span>
+                        </div>
+                        <div class="vital-item">
+                            <span class="vital-label">Signal Quality:</span>
+                            <span class="vital-value" id="signalQuality">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <div class="card alerts-card">
+                    <h3>🚨 Active Alerts</h3>
+                    <div id="alertsList" class="alerts-list">
+                        <p class="no-data">No alerts</p>
+                    </div>
+                </div>
+
+                <!-- Events -->
+                <div class="card events-card">
+                    <h3>📊 Recent Events</h3>
+                    <div id="eventsList" class="events-list">
+                        <p class="no-data">No events</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

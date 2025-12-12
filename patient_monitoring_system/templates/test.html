@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WebSocket Test</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+
+<body>
+    <h1>WebSocket Connection Test</h1>
+    <div id="status">Connecting...</div>
+    <div id="frameCount">Frames received: 0</div>
+    <img id="video" style="max-width: 800px;">
+
+    <script>
+        const socket = io();
+        let frameCount = 0;
+
+        socket.on('connect', () => {
+            document.getElementById('status').textContent = 'Connected!';
+            console.log('Socket connected');
+        });
+
+        socket.on('disconnect', () => {
+            document.getElementById('status').textContent = 'Disconnected';
+            console.log('Socket disconnected');
+        });
+
+        socket.on('frame_update', (data) => {
+            frameCount++;
+            document.getElementById('frameCount').textContent = 'Frames received: ' + frameCount;
+            document.getElementById('video').src = 'data:image/jpeg;base64,' + data.frame;
+            console.log('Frame received:', frameCount, 'FPS:', data.fps);
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+            document.getElementById('status').textContent = 'Connection error: ' + error;
+        });
+    </script>
+</body>
+
+</html>
