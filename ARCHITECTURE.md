@@ -410,12 +410,12 @@ HIPAA/GDPR Compliance
 ---
 
 This architecture diagram shows:
-- ✅ Complete data flow from input to output
-- ✅ All 6 AI agents working in parallel
-- ✅ Multi-channel alert system
-- ✅ Component dependencies
-- ✅ Security model
-- ✅ Data structures at each stage
+- Complete data flow from input to output
+-  All 6 AI agents working in parallel
+-  Multi-channel alert system
+- Component dependencies
+- Security model
+-  Data structures at each stage
 
 The system is designed for **real-time processing**, **high availability**, and **healthcare compliance**!
 
